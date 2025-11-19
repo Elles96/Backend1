@@ -29,8 +29,8 @@ public class LietotajsService {
             throw new RuntimeException("Lietotājvārds jau pastāv: " + lietotajs.getLietotajvards());
         }
 
-        Lietotajs savedUser = lietotajsRepository.save(lietotajs);
-        return savedUser.getId();
+        Lietotajs savedLietotajs = lietotajsRepository.save(lietotajs);
+        return savedLietotajs.getId();
     }
 
     public Optional<Lietotajs> findByLietotajvards(String lietotajvards) {
@@ -43,7 +43,7 @@ public class LietotajsService {
 
     public boolean authenticate(String lietotajvards, String parole) {
         return lietotajsRepository.findByLietotajvards(lietotajvards)
-                .map(user -> user.getParole().equals(parole))
+                .map(lietotajs -> lietotajs.getParole().equals(parole))
                 .orElse(false);
     }
 
