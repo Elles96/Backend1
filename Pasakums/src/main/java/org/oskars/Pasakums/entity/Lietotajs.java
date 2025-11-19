@@ -22,8 +22,4 @@ public class Lietotajs {
     @Column(nullable = false)
     private String parole;
 
-    public Lietotajs(String lietotajvards, String parole) {
-        this.lietotajvards = lietotajvards;
-        this.parole = parole;
-    }
 }

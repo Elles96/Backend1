@@ -39,17 +39,6 @@ public class Pasakums {
     @Column(nullable = false)
     private Integer currentDalibnieki;
 
-    public Pasakums(String nosaukums, String apraksts, LocalDate datums, LocalTime laiks, String vieta,
-            Integer maxDalibnieki) {
-        this.nosaukums = nosaukums;
-        this.apraksts = apraksts;
-        this.datums = datums;
-        this.laiks = laiks;
-        this.vieta = vieta;
-        this.maxDalibnieki = maxDalibnieki;
-        this.currentDalibnieki = 0;
-    }
-
     public boolean isFull() {
         return currentDalibnieki >= maxDalibnieki;
     }

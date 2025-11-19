@@ -42,13 +42,9 @@ public class LietotajsService {
     }
 
     public boolean authenticate(String lietotajvards, String parole) {
-
-        Optional<Lietotajs> user = lietotajsRepository.findByLietotajvards(lietotajvards);
-        if (user.isPresent()) {
-
-            return user.get().getParole().equals(parole);
-        }
-        return false;
+        return lietotajsRepository.findByLietotajvards(lietotajvards)
+                .map(user -> user.getParole().equals(parole))
+                .orElse(false);
     }
 
     public void deleteLietotajs(Long id) {

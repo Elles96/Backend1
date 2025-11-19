@@ -49,20 +49,15 @@ public class PasakumsService {
     }
 
     public boolean registerForEvent(Long id) {
-
-        Optional<Pasakums> optionalPasakums = pasakumsRepository.findById(id);
-        if (optionalPasakums.isPresent()) {
-            Pasakums pasakums = optionalPasakums.get();
-
-            if (!pasakums.isFull()) {
-
-                pasakums.setCurrentDalibnieki(pasakums.getCurrentDalibnieki() + 1);
-
-                pasakumsRepository.save(pasakums);
-                return true;
-            }
-        }
-
-        return false;
+        return pasakumsRepository.findById(id)
+                .map(pasakums -> {
+                    if (!pasakums.isFull()) {
+                        pasakums.setCurrentDalibnieki(pasakums.getCurrentDalibnieki() + 1);
+                        pasakumsRepository.save(pasakums);
+                        return true;
+                    }
+                    return false;
+                })
+                .orElse(false);
     }
 }

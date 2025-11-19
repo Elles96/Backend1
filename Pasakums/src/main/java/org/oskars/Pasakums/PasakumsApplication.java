@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PasakumsApplication {
 
-	// Step 2: Main method - entry point of the application
-	public static void main(String[] args) {
-		// Step 3: Start the Spring Boot application
-		SpringApplication.run(PasakumsApplication.class, args);
-	}
+    // Step 2: Main method - entry point of the application
+    public static void main(String[] args) {
+        // Step 3: Start the Spring Boot application
+        SpringApplication.run(PasakumsApplication.class, args);
+    }
 }
