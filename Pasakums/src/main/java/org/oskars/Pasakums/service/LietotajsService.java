@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LietotajsService {
@@ -18,14 +17,12 @@ public class LietotajsService {
         return lietotajsRepository.findAll();
     }
 
-    public Optional<Lietotajs> getLietotajsById(Long id) {
-        return lietotajsRepository.findById(id);
+    public Lietotajs getLietotajsById(Long id) {
+        return lietotajsRepository.findById(id).orElse(null);
     }
 
     public Long createLietotajs(Lietotajs lietotajs) {
-
         if (lietotajsRepository.existsByLietotajvards(lietotajs.getLietotajvards())) {
-
             throw new RuntimeException("Lietotājvārds jau pastāv: " + lietotajs.getLietotajvards());
         }
 
@@ -33,8 +30,8 @@ public class LietotajsService {
         return savedLietotajs.getId();
     }
 
-    public Optional<Lietotajs> findByLietotajvards(String lietotajvards) {
-        return lietotajsRepository.findByLietotajvards(lietotajvards);
+    public Lietotajs findByLietotajvards(String lietotajvards) {
+        return lietotajsRepository.findByLietotajvards(lietotajvards).orElse(null);
     }
 
     public boolean existsByLietotajvards(String lietotajvards) {
@@ -42,9 +39,18 @@ public class LietotajsService {
     }
 
     public boolean authenticate(String lietotajvards, String parole) {
-        return lietotajsRepository.findByLietotajvards(lietotajvards)
-                .map(lietotajs -> lietotajs.getParole().equals(parole))
-                .orElse(false);
+        Lietotajs lietotajs = findByLietotajvards(lietotajvards);
+
+        if (lietotajs == null) {
+            return false; // User not found
+        }
+
+        String lietotajaParole = lietotajs.getParole();
+        if (lietotajaParole.equals(parole)) {
+            return true; // Password matches
+        } else {
+            return false; // Password doesn't match
+        }
     }
 
     public void deleteLietotajs(Long id) {

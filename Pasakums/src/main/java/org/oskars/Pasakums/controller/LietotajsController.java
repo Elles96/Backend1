@@ -49,13 +49,23 @@ public class LietotajsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Lietotajs> getById(@PathVariable Long id) {
-        return service.getLietotajsById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        Lietotajs lietotajs = service.getLietotajsById(id);
+        if (lietotajs != null) {
+            return ResponseEntity.ok(lietotajs);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.getLietotajsById(id).isPresent() ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        Lietotajs lietotajs = service.getLietotajsById(id);
+        if (lietotajs != null) {
+            service.deleteLietotajs(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     record LoginRequest(String lietotajvards, String parole) {

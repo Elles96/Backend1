@@ -26,7 +26,12 @@ public class PasakumsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pasakums> getById(@PathVariable Long id) {
-        return service.getPasakumsById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        Pasakums pasakums = service.getPasakumsById(id);
+        if (pasakums != null) {
+            return ResponseEntity.ok(pasakums);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -41,16 +46,23 @@ public class PasakumsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Pasakums> update(@PathVariable Long id, @RequestBody Pasakums pasakums) {
-        return service.getPasakumsById(id).isPresent()
-                ? ResponseEntity.ok(service.updatePasakums(pasakums))
-                : ResponseEntity.notFound().build();
+        Pasakums existingPasakums = service.getPasakumsById(id);
+        if (existingPasakums != null) {
+            return ResponseEntity.ok(service.updatePasakums(pasakums));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.getPasakumsById(id).isPresent()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        Pasakums pasakums = service.getPasakumsById(id);
+        if (pasakums != null) {
+            service.deletePasakums(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/search/nosaukums")
@@ -73,5 +85,13 @@ public class PasakumsController {
         return service.registerForEvent(id)
                 ? ResponseEntity.ok("Veiksmīgi piereģistrējāties pasākumam")
                 : ResponseEntity.badRequest().body("Reģistrācija neizdevās - pasākums var būt pilns vai nav atrasts");
+    }
+
+    @DeleteMapping("/{id}/unregister")
+    public ResponseEntity<String> unregister(@PathVariable Long id) {
+        return service.unregisterFromEvent(id)
+                ? ResponseEntity.ok("Veiksmīgi atcēlāt dalību pasākumā")
+                : ResponseEntity.badRequest()
+                        .body("Dalības atcelšana neizdevās - pasākums nav atrasts vai neesat reģistrējies");
     }
 }

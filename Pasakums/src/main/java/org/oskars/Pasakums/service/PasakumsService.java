@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PasakumsService {
@@ -19,8 +18,8 @@ public class PasakumsService {
         return pasakumsRepository.findAll();
     }
 
-    public Optional<Pasakums> getPasakumsById(Long id) {
-        return pasakumsRepository.findById(id);
+    public Pasakums getPasakumsById(Long id) {
+        return pasakumsRepository.findById(id).orElse(null);
     }
 
     public Long createPasakums(Pasakums pasakums) {
@@ -49,15 +48,34 @@ public class PasakumsService {
     }
 
     public boolean registerForEvent(Long id) {
-        return pasakumsRepository.findById(id)
-                .map(pasakums -> {
-                    if (!pasakums.isFull()) {
-                        pasakums.setCurrentDalibnieki(pasakums.getCurrentDalibnieki() + 1);
-                        pasakumsRepository.save(pasakums);
-                        return true;
-                    }
-                    return false;
-                })
-                .orElse(false);
+        Pasakums pasakums = getPasakumsById(id);
+
+        if (pasakums == null) {
+            return false; // Event not found
+        }
+
+        if (pasakums.isFull()) {
+            return false; // Event is full
+        }
+
+        pasakums.setCurrentDalibnieki(pasakums.getCurrentDalibnieki() + 1);
+        pasakumsRepository.save(pasakums);
+        return true; // Successfully registered
+    }
+
+    public boolean unregisterFromEvent(Long id) {
+        Pasakums pasakums = getPasakumsById(id);
+
+        if (pasakums == null) {
+            return false; // Event not found
+        }
+
+        if (pasakums.getCurrentDalibnieki() <= 0) {
+            return false; // No participants to remove
+        }
+
+        pasakums.setCurrentDalibnieki(pasakums.getCurrentDalibnieki() - 1);
+        pasakumsRepository.save(pasakums);
+        return true; // Successfully unregistered
     }
 }
