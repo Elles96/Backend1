@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
 @RequestMapping("/api/lietotaji")
-
 @CrossOrigin(origins = "*")
 public class LietotajsController {
 
@@ -18,6 +16,9 @@ public class LietotajsController {
 
     public LietotajsController(LietotajsService service) {
         this.service = service;
+    }
+
+    public record LoginResponse(String message) {
     }
 
     @GetMapping
@@ -36,10 +37,12 @@ public class LietotajsController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest req) {
-        return service.authenticate(req.lietotajvards(), req.parole())
-                ? ResponseEntity.ok("Pieteikšanās veiksmīga")
-                : ResponseEntity.status(401).body("Nepareizi pieteikšanās dati");
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
+        if (service.authenticate(req.lietotajvards(), req.parole())) {
+            return ResponseEntity.ok(new LoginResponse("Pieteikšanās veiksmīga"));
+        } else {
+            return ResponseEntity.status(401).body(new LoginResponse("Nepareizi pieteikšanās dati"));
+        }
     }
 
     @GetMapping("/check/{username}")
